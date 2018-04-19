@@ -72,6 +72,7 @@ const DEFAULT_PROPS = {
   level: 'L',
   bgColor: '#FFFFFF',
   fgColor: '#000000',
+  labelHeight: 0	
 };
 
 const PROP_TYPES = {
@@ -80,6 +81,8 @@ const PROP_TYPES = {
   level: PropTypes.oneOf(['L', 'M', 'Q', 'H']),
   bgColor: PropTypes.string,
   fgColor: PropTypes.string,
+  label: PropTypes.string,
+  labelHeight: PropTypes.number
 };
 
 class QRCodeCanvas extends React.Component<QRProps> {
@@ -103,7 +106,7 @@ class QRCodeCanvas extends React.Component<QRProps> {
   }
 
   update() {
-    const {value, size, level, bgColor, fgColor} = this.props;
+    const {value, size, level, bgColor, fgColor, label, labelHeight} = this.props;
 
     // We'll use type===-1 to force QRCode to automatically pick the best type
     const qrcode = new QRCodeImpl(-1, ErrorCorrectLevel[level]);
@@ -126,8 +129,12 @@ class QRCodeCanvas extends React.Component<QRProps> {
       const scale =
         (window.devicePixelRatio || 1) / getBackingStorePixelRatio(ctx);
       canvas.height = canvas.width = size * scale;
+      canvas.height += labelHeight;
+	
       ctx.scale(scale, scale);
-
+      ctx.font = "10px Arial";  
+      ctx.fillText("Hello World",0,canvas.height - labelHeight);
+	
       cells.forEach(function(row, rdx) {
         row.forEach(function(cell, cdx) {
           ctx && (ctx.fillStyle = cell ? fgColor : bgColor);
